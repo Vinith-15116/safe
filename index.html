@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSpace - Mental Support & Safe Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #E8A9C8;    /* Soft Rose Pink */
+            --secondary: #B8A7D9;   /* Soft Lavender */
+            --accent: #FFD4E5;      /* Light Pink */
+            --success: #A8D8CD;     /* Mint Green */
+            --warning: #FFB5C2;     /* Coral Pink */
+            --bg-light: #FFF5F8;    /* Very Light Pink */
+            --text: #4A4558;        /* Deep Purple-Grey */
+            --text-light: #8E8499;  /* Soft Purple-Grey */
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(-45deg, 
+                #F8D4E5 0%,     /* Soft Pink */
+                #E8B4D9 25%,    /* Lilac Pink */
+                #B8A7D9 50%,    /* Lavender */
+                #D4E5F8 75%,    /* Sky Blue */
+                #FFE8F4 100%    /* Light Rose */
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(232, 169, 200, 0.4) 0%, transparent 50%),  /* Rose Pink */
+                radial-gradient(circle at 80% 80%, rgba(184, 167, 217, 0.4) 0%, transparent 50%),  /* Lavender */
+                radial-gradient(circle at 50% 20%, rgba(255, 212, 229, 0.2) 0%, transparent 40%);  /* Light Pink */
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 2rem;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(102, 126, 234, 0.5)); }
+        }
+
+        .nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.7rem 1.3rem;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .nav-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            display: none;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            margin: 0 1rem 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: rotateBg 20s linear infinite;
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 1.2s ease-out;
+            text-shadow: 0 4px 30px rgba(255, 255, 255, 0.4);
+            position: relative;
+            letter-spacing: -1px;
+        }
+
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { width: 100px; opacity: 0.5; }
+            50% { width: 200px; opacity: 1; }
+            100% { width: 100px; opacity: 0.5; }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-40px);
+                filter: blur(10px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            animation: fadeIn 1s ease-out 0.4s both;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card {
+            padding: 3rem;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.98) 100%);
+        }
+        
+        .feature-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover .feature-image {
+            transform: scale(1.03);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-icon::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: inherit;
+            border-radius: inherit;
+            opacity: 0.4;
+            filter: blur(10px);
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .card-icon::before {
+            opacity: 0.6;
+            transform: scale(1.2);
+        }
+
+        .card-features {
+            display: grid;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        .card-features span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .card-features i {
+            color: var(--success);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .card-features span {
+            transform: translateX(5px);
+        }
+
+        .card-decoration {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, 
+                rgba(137,180,216,0.1) 0%, 
+                rgba(155,140,192,0.1) 100%);
+            border-radius: 24px;
+            transform: translate(50%, -50%) rotate(45deg);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .card-decoration {
+            transform: translate(40%, -40%) rotate(30deg) scale(1.1);
+            opacity: 0.8;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 12px 30px rgba(79, 172, 254, 0.4);
+        }
+
+        .emergency-banner {
+            background: linear-gradient(135deg, 
+                #FFB5D8 0%,     /* Soft Pink */
+                #E8A9C8 100%    /* Rose Pink */
+            );
+            color: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(232, 169, 200, 0.3);
+            animation: pulse 3s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .emergency-banner h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .emergency-contacts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .emergency-contact {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .emergency-contact:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .mood-journal {
+            text-align: center;
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .mood-btn {
+            background: white;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            position: relative;
+        }
+
+        .mood-btn::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mood-btn:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .mood-btn:hover::before {
+            opacity: 1;
+        }
+
+        .mood-btn.selected {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .mood-btn.selected::before {
+            opacity: 1;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .breathing-exercise {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .breathing-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            margin: 2.5rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+            position: relative;
+        }
+
+        .breathing-circle::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 50%;
+            opacity: 0.3;
+            z-index: -1;
+            filter: blur(20px);
+        }
+
+        .breathing-circle.inhale {
+            transform: scale(1.6);
+            box-shadow: 0 30px 80px rgba(102, 126, 234, 0.5);
+        }
+
+        .breathing-circle.exhale {
+            transform: scale(1);
+        }
+
+        #breathingInstruction {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text);
+            margin: 1.5rem 0;
+        }
+
+        .community-post {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid;
+            border-image: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) 1;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .community-post:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .post-content {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .post-action-btn {
+            background: white;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .post-action-btn:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* Forum Styles */
+        .forum-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .forum-category {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .forum-category:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .forum-category h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .forum-category h3 i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .forum-category p {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .forum-stats {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: block;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 0.5rem;
+        }
+
+        .forum-guidelines li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+        }
+
+        .forum-guidelines i {
+            color: var(--success);
+            font-size: 0.9rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .resource-item {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .resource-item:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            transform: translateX(10px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .resource-item strong {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-response {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mood-history {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .mood-history-item {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .mood-history-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(232, 169, 200, 0.2) 0%,
+                rgba(184, 167, 217, 0.2) 100%
+            );
+            z-index: 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-section:hover h3::after {
+            width: 100%;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(232, 169, 200, 0.4);
+        }
+
+        .footer-links i {
+            width: 24px;
+            opacity: 1;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+            font-size: 1.2rem;
+        }
+
+        /* Quick Links Section Icons */
+        .footer-section:nth-child(1) .footer-links i {
+            background: linear-gradient(135deg, #FF9ECE, #FFB5E8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(255, 158, 206, 0.3));
+        }
+
+        /* Emergency Support Section Icons */
+        .footer-section:nth-child(2) .footer-links i {
+            background: linear-gradient(135deg, #FF8FAB, #FFB2D4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(255, 143, 171, 0.3));
+        }
+
+        /* Self-Care Tools Section Icons */
+        .footer-section:nth-child(3) .footer-links i {
+            background: linear-gradient(135deg, #C4A8FF, #DDB6FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(196, 168, 255, 0.3));
+        }
+
+        /* Community & Support Section Icons */
+        .footer-section:nth-child(4) .footer-links i {
+            background: linear-gradient(135deg, #B8A7D9, #D4BBFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(184, 167, 217, 0.3));
+        }
+
+        .footer-links a:hover i {
+            transform: scale(1.2);
+            opacity: 1;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        /* Social Media Icons */
+        .social-link i {
+            background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.8));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        /* Individual Social Media Icon Colors on Hover */
+        .social-link[title="Facebook"]:hover i {
+            background: linear-gradient(135deg, #1877f2, #3b5998);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-link[title="Instagram"]:hover i {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-link[title="Twitter"]:hover i {
+            background: linear-gradient(135deg, #1da1f2, #0d8ecf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-link[title="YouTube"]:hover i {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-link[title="LinkedIn"]:hover i {
+            background: linear-gradient(135deg, #0077b5, #00a0dc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mood-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2.5rem;
+            }
+
+            .breathing-circle {
+                width: 200px;
+                height: 200px;
+                font-size: 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .shape:nth-child(1) {
+            width: 150px;
+            height: 150px;
+            top: 15%;
+            left: 15%;
+            animation-delay: 0s;
+            opacity: 0.7;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 55%;
+            right: 15%;
+            animation-delay: 5s;
+            opacity: 0.5;
+        }
+
+        .shape:nth-child(3) {
+            width: 120px;
+            height: 120px;
+            bottom: 25%;
+            left: 35%;
+            animation-delay: 10s;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                filter: blur(2px);
+            }
+            50% { 
+                transform: translateY(-40px) rotate(180deg) scale(1.1); 
+                filter: blur(4px);
+            }
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.1) 2%, transparent 0%),
+                radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.05) 2%, transparent 0%);
+            background-size: 100px 100px;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                🌸 SafeSpace
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" onclick="showSection('home')">Home</button>
+                <button class="nav-btn" onclick="showSection('journal')">Mood Journal</button>
+                <button class="nav-btn" onclick="showSection('community')">Community</button>
+                <button class="nav-btn" onclick="showSection('forum')">Forum</button>
+                <button class="nav-btn" onclick="showSection('resources')">Resources</button>
+                <button class="nav-btn" onclick="showSection('selfcare')">Self-Care</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Begin Your Journey to Inner Peace</h1>
+                <p class="hero-main">Your safe haven for mental wellness, where every step forward is celebrated</p>
+                <p style="font-size: 1.2rem; margin-top: 1rem; color: rgba(255, 255, 255, 0.9);">
+                    Take a deep breath. You're not alone on this journey. 
+                    <span style="display: block; margin-top: 0.5rem; font-style: italic;">
+                        Every story matters. Every feeling is valid.
+                    </span>
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);" onclick="showSection('journal')">
+                        🌸 Start Your Journey
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('community')">
+                        💫 Join Our Community
+                    </button>
+                </div>
+                <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 3rem; color: rgba(255, 255, 255, 0.9);">
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤝</div>
+                        <div style="font-weight: 500;">24/7 Support</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                        <div style="font-weight: 500;">Guided Healing</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💙</div>
+                        <div style="font-weight: 500;">Safe Community</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="emergency-banner">
+                <h2>🆘 Emergency Contacts</h2>
+                <p>If you're in crisis, please reach out immediately</p>
+                <div class="emergency-contacts">
+                    <div class="emergency-contact">
+                        <strong>National Suicide Prevention</strong><br>
+                        📞 988 or 1-800-273-8255<br>
+                        Available 24/7
+                    </div>
+                    <div class="emergency-contact">
+                        <strong>Crisis Text Line</strong><br>
+                        💬 Text HOME to 741741<br>
+                        Available 24/7
+                    </div>
+                    <div class="emergency-contact">
+                        <strong>International Hotlines</strong><br>
+                        🌍 findahelpline.com<br>
+                        Global resources
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-grid">
+                <div class="card feature-card">
+                    <img src="https://images.unsplash.com/photo-1506784693919-ef06d93c28d2?w=600&q=80" alt="Peaceful journaling" class="feature-image">
+                    <div class="card-icon">
+                        <i class="fas fa-journal-whills"></i>
+                    </div>
+                    <h3>Mood Journaling</h3>
+                    <p>Track your emotional wellness with AI-powered insights and supportive guidance.</p>
+                    <div class="card-features">
+                        <span><i class="fas fa-check-circle"></i> Daily Mood Tracking</span>
+                        <span><i class="fas fa-check-circle"></i> AI Insights</span>
+                        <span><i class="fas fa-check-circle"></i> Progress Visualization</span>
+                    </div>
+                    <button class="btn" onclick="showSection('journal')">
+                        <i class="fas fa-arrow-right"></i> Start Journaling
+                    </button>
+                    <div class="card-decoration"></div>
+                </div>
+                <div class="card feature-card">
+                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Supportive community" class="feature-image">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Safe Community</h3>
+                    <p>Connect with others in a moderated, supportive environment. Post anonymously or with your name.</p>
+                    <div class="card-features">
+                        <span><i class="fas fa-check-circle"></i> Anonymous Support</span>
+                        <span><i class="fas fa-check-circle"></i> Moderated Space</span>
+                        <span><i class="fas fa-check-circle"></i> 24/7 Community</span>
+                    </div>
+                    <button class="btn" onclick="showSection('community')">
+                        <i class="fas fa-arrow-right"></i> Join Community
+                    </button>
+                    <div class="card-decoration"></div>
+                </div>
+                <div class="card feature-card">
+                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&q=80" alt="Resource library" class="feature-image">
+                    <div class="card-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h3>Resource Library</h3>
+                    <p>Access curated mental health resources, articles, and professional support options.</p>
+                    <div class="card-features">
+                        <span><i class="fas fa-check-circle"></i> Expert Articles</span>
+                        <span><i class="fas fa-check-circle"></i> Support Directory</span>
+                        <span><i class="fas fa-check-circle"></i> Self-Help Guides</span>
+                    </div>
+                    <button class="btn" onclick="showSection('resources')">
+                        <i class="fas fa-arrow-right"></i> Browse Resources
+                    </button>
+                    <div class="card-decoration"></div>
+                </div>
+                <div class="card feature-card">
+                    <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80" alt="Self-care practice" class="feature-image">
+                    <div class="card-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>Self-Care Tools</h3>
+                    <p>Guided breathing exercises, meditation, and calming activities for your wellbeing.</p>
+                    <div class="card-features">
+                        <span><i class="fas fa-check-circle"></i> Breathing Exercises</span>
+                        <span><i class="fas fa-check-circle"></i> Guided Meditation</span>
+                        <span><i class="fas fa-check-circle"></i> Wellness Tracking</span>
+                    </div>
+                    <button class="btn" onclick="showSection('selfcare')">
+                        <i class="fas fa-arrow-right"></i> Practice Self-Care
+                    </button>
+                    <div class="card-decoration"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mood Journal Section -->
+        <section id="journal" class="section">
+            <div class="card mood-journal">
+                <h2>Mood Journal</h2>
+                <p style="margin-bottom: 1rem;">Your feelings matter. How are you today?</p>
+                <p style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 2rem;">Remember, there's no right or wrong way to feel. Every emotion is valid.</p>
+                <div class="mood-options">
+                    <button class="mood-btn" data-mood="great" onclick="selectMood('great', '😊')">😊</button>
+                    <button class="mood-btn" data-mood="good" onclick="selectMood('good', '🙂')">🙂</button>
+                    <button class="mood-btn" data-mood="okay" onclick="selectMood('okay', '😐')">😐</button>
+                    <button class="mood-btn" data-mood="sad" onclick="selectMood('sad', '😔')">😔</button>
+                    <button class="mood-btn" data-mood="anxious" onclick="selectMood('anxious', '😰')">😰</button>
+                </div>
+                <textarea id="journalEntry" placeholder="What's on your mind? Write your thoughts here... (Optional)"></textarea>
+                <button class="btn" style="margin-top: 1.5rem;" onclick="submitJournal()">Save Entry</button>
+                <div id="aiResponse"></div>
+                <div class="mood-history" id="moodHistory"></div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section id="community" class="section">
+            <div class="card">
+                <h2>Safe Community Forum</h2>
+                <p>Share your experiences, support others, and connect in a safe, moderated space.</p>
+                
+                <div style="margin: 2.5rem 0;">
+                    <h3>Create a Post</h3>
+                    <input type="text" id="postTitle" placeholder="Post title (optional)" style="margin-top: 1rem;">
+                    <textarea id="postContent" placeholder="Share your thoughts..." style="margin-top: 1rem;"></textarea>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="anonymousPost" checked>
+                        <label for="anonymousPost">Post anonymously</label>
+                    </div>
+                    <button class="btn" onclick="createPost()">Post to Community</button>
+                </div>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 1.5rem;">Community Posts</h3>
+                <div id="communityPosts">
+                    <div class="community-post">
+                        <div class="post-header">
+                            <span>Anonymous • 2 hours ago</span>
+                        </div>
+                        <div class="post-content">
+                            Just wanted to say thank you to this community. Your support has meant the world to me during difficult times. Remember: you're not alone. 💙
+                        </div>
+                        <div class="post-actions">
+                            <button class="post-action-btn">❤️ Support (24)</button>
+                            <button class="post-action-btn">💬 Reply</button>
+                        </div>
+                    </div>
+                    <div class="community-post">
+                        <div class="post-header">
+                            <span>Anonymous • 5 hours ago</span>
+                        </div>
+                        <div class="post-content">
+                            Having a tough day today. Grateful for this safe space where I can express myself without judgment.
+                        </div>
+                        <div class="post-actions">
+                            <button class="post-action-btn">❤️ Support (18)</button>
+                            <button class="post-action-btn">💬 Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forum Section -->
+        <section id="forum" class="section">
+            <div class="card">
+                <h2>Discussion Forums</h2>
+                <p>Join our supportive community discussions on various mental health topics.</p>
+                
+                <div class="forum-categories" style="margin-top: 2rem;">
+                    <div class="forum-category">
+                        <h3><i class="fas fa-users"></i> General Discussion</h3>
+                        <p>Open conversations about mental health and wellbeing</p>
+                        <span class="forum-stats">24 Topics • 156 Posts</span>
+                    </div>
+                    
+                    <div class="forum-category">
+                        <h3><i class="fas fa-heart"></i> Support Circle</h3>
+                        <p>A safe space to share your journey and find support</p>
+                        <span class="forum-stats">42 Topics • 285 Posts</span>
+                    </div>
+                    
+                    <div class="forum-category">
+                        <h3><i class="fas fa-book"></i> Resources & Tips</h3>
+                        <p>Share and discover helpful resources and coping strategies</p>
+                        <span class="forum-stats">18 Topics • 94 Posts</span>
+                    </div>
+                    
+                    <div class="forum-category">
+                        <h3><i class="fas fa-star"></i> Success Stories</h3>
+                        <p>Celebrate progress and share your victories</p>
+                        <span class="forum-stats">31 Topics • 173 Posts</span>
+                    </div>
+                </div>
+
+                <div class="forum-guidelines" style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.1); border-radius: 16px;">
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-shield-alt"></i> Forum Guidelines</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check"></i> Be respectful and supportive</li>
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check"></i> Maintain confidentiality</li>
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check"></i> No hate speech or bullying</li>
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check"></i> Report concerns to moderators</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources" class="section">
+            <div class="card">
+                <h2>Mental Health Resources</h2>
+                <p>Curated resources to support your mental wellness journey</p>
+
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem;">Educational Resources</h3>
+                <div class="resource-item" onclick="alert('Visit: nami.org - National Alliance on Mental Illness')">
+                    <strong>📖 Understanding Mental Health</strong>
+                    NAMI - Education, support groups, and advocacy resources
+                </div>
+                <div class="resource-item" onclick="alert('Visit: mindful.org - Mindfulness resources')">
+                    <strong>🧠 Mindfulness & Meditation</strong>
+                    Guided practices and research on mindfulness-based interventions
+                </div>
+                <div class="resource-item" onclick="alert('Visit: anxietycanada.com - Anxiety support resources')">
+                    <strong>😰 Anxiety Management</strong>
+                    Tools and strategies for managing anxiety and stress
+                </div>
+
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem;">Crisis Resources</h3>
+                <div class="resource-item" onclick="alert('Call 988 or 1-800-273-8255')">
+                    <strong>🆘 24/7 Crisis Support</strong>
+                    Immediate help when you need it most - available 24/7
+                </div>
+            </div>
+        </section>
+
+        <!-- Self-Care Section -->
+        <section id="selfcare" class="section">
+            <div class="card" style="text-align: center; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Today's Gentle Reminder</h3>
+                <p style="font-size: 1.3rem; color: var(--primary); font-weight: 500; margin-bottom: 1rem;">"You are not your thoughts. You are the peaceful awareness behind them."</p>
+                <p style="color: var(--text-light);">Take a moment to be present with yourself</p>
+            </div>
+
+            <div class="card breathing-exercise">
+                <h2>Guided Breathing Exercise</h2>
+                <p>Take a moment for yourself. Follow the circle.</p>
+                <div class="breathing-circle" id="breathingCircle">Breathe</div>
+                <p id="breathingInstruction">Click "Start" to begin</p>
+                <button class="btn" id="breathingBtn" onclick="toggleBreathing()">Start</button>
+            </div>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3>🎵 Calming Sounds</h3>
+                    <p>Nature sounds and peaceful music to help you relax</p>
+                    <button class="btn-secondary btn" onclick="alert('Feature: Play calming nature sounds')">Play Sounds</button>
+                </div>
+                <div class="card">
+                    <h3>✍️ Gratitude Practice</h3>
+                    <p>Write down three things you're grateful for today</p>
+                    <button class="btn-secondary btn" onclick="alert('Feature: Open gratitude journal')">Start Practice</button>
+                </div>
+                <div class="card">
+                    <h3>🚶 Gentle Movement</h3>
+                    <p>Simple stretches and movements to release tension</p>
+                    <button class="btn-secondary btn" onclick="alert('Feature: Guided stretching routine')">Begin Stretching</button>
+                </div>
+                <div class="card">
+                    <h3>📱 Digital Detox</h3>
+                    <p>Tips and timers for healthy screen time boundaries</p>
+                    <button class="btn-secondary btn" onclick="alert('Feature: Set screen time reminder')">Set Reminder</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#" onclick="showSection('journal')"><i class="fas fa-journal-whills"></i> Mood Journal</a></li>
+                    <li><a href="#" onclick="showSection('community')"><i class="fas fa-users"></i> Community</a></li>
+                    <li><a href="#" onclick="showSection('resources')"><i class="fas fa-book-open"></i> Resources</a></li>
+                    <li><a href="#" onclick="showSection('selfcare')"><i class="fas fa-spa"></i> Self-Care</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Emergency Support</h3>
+                <ul class="footer-links">
+                    <li><a href="tel:988"><i class="fas fa-phone-alt"></i> 988 Suicide & Crisis Lifeline</a></li>
+                    <li><a href="sms:741741"><i class="fas fa-comment-dots"></i> Crisis Text Line (741741)</a></li>
+                    <li><a href="https://findahelpline.com" target="_blank"><i class="fas fa-globe"></i> International Helplines</a></li>
+                    <li><a href="#" onclick="showSection('resources')"><i class="fas fa-hospital"></i> Local Resources</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Self-Care Tools</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showSection('selfcare')"><i class="fas fa-wind"></i> Breathing Exercises</a></li>
+                    <li><a href="#" onclick="showSection('journal')"><i class="fas fa-feather-alt"></i> Gratitude Journal</a></li>
+                    <li><a href="#" onclick="showSection('selfcare')"><i class="fas fa-music"></i> Calming Sounds</a></li>
+                    <li><a href="#" onclick="showSection('selfcare')"><i class="fas fa-walking"></i> Gentle Movement</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Community & Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showSection('community')"><i class="fas fa-comments"></i> Discussion Forums</a></li>
+                    <li><a href="#" onclick="showSection('resources')"><i class="fas fa-newspaper"></i> Mental Health Articles</a></li>
+                    <li><a href="#" onclick="showSection('resources')"><i class="fas fa-hands-helping"></i> Support Groups</a></li>
+                    <li><a href="mailto:support@safespace.com"><i class="fas fa-envelope"></i> Contact Support</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p><i class="far fa-copyright"></i> 2025 SafeSpace - Your Mental Wellness Sanctuary</p>
+            <p style="margin: 0.5rem 0"><i class="fas fa-heart"></i> Together we heal, together we grow. You are not alone.</p>
+            <div class="social-links" style="justify-content: center">
+                <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let selectedMood = null;
+        let breathingActive = false;
+        let breathingInterval = null;
+        let moodEntries = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function selectMood(mood, emoji) {
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            selectedMood = { mood, emoji };
+        }
+
+        function submitJournal() {
+            if (!selectedMood) {
+                alert('Please select a mood first!');
+                return;
+            }
+
+            const entry = document.getElementById('journalEntry').value;
+            const timestamp = new Date().toLocaleString();
+            
+            moodEntries.push({
+                mood: selectedMood,
+                entry: entry,
+                timestamp: timestamp
+            });
+
+            const aiResponses = {
+                great: "That's wonderful! 😊 It's beautiful to see you feeling great. Keep embracing these positive moments!",
+                good: "I'm glad you're feeling good! 🙂 Remember to celebrate these positive feelings.",
+                okay: "Thank you for checking in. Some days are just okay, and that's perfectly valid. Be gentle with yourself.",
+                sad: "I hear you, and your feelings are valid. 💙 Remember, it's okay to not be okay. Consider reaching out to someone you trust or exploring our resources.",
+                anxious: "I understand you're feeling anxious. 😰 Try our breathing exercise to help calm your mind. You're not alone in this feeling."
+            };
+
+            const response = aiResponses[selectedMood.mood];
+            document.getElementById('aiResponse').innerHTML = `
+                <div class="ai-response">
+                    <strong>AI Support Response:</strong><br>
+                    ${response}
+                    <br><br>
+                    Entry saved for ${timestamp}
+                </div>
+            `;
+
+            updateMoodHistory();
+            document.getElementById('journalEntry').value = '';
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            selectedMood = null;
+        }
+
+        function updateMoodHistory() {
+            const historyDiv = document.getElementById('moodHistory');
+            historyDiv.innerHTML = '<h3 style="width: 100%; margin: 1.5rem 0; text-align: center;">Recent Mood History</h3>';
+            
+            moodEntries.slice(-7).reverse().forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'mood-history-item';
+                item.innerHTML = `${entry.mood.emoji} ${entry.timestamp.split(',')[0]}`;
+                historyDiv.appendChild(item);
+            });
+        }
+
+        function createPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const isAnonymous = document.getElementById('anonymousPost').checked;
+
+            if (!content.trim()) {
+                alert('Please write something to post!');
+                return;
+            }
+
+            const postsDiv = document.getElementById('communityPosts');
+            const newPost = document.createElement('div');
+            newPost.className = 'community-post';
+            newPost.innerHTML = `
+                <div class="post-header">
+                    <span>${isAnonymous ? 'Anonymous' : 'You'} • Just now</span>
+                </div>
+                ${title ? `<h4>${title}</h4>` : ''}
+                <div class="post-content">
+                    ${content}
+                </div>
+                <div class="post-actions">
+                    <button class="post-action-btn">❤️ Support (0)</button>
+                    <button class="post-action-btn">💬 Reply</button>
+                </div>
+            `;
+            
+            postsDiv.insertBefore(newPost, postsDiv.firstChild);
+            
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            alert('Your post has been shared with the community! 💙');
+        }
+
+        function toggleBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const instruction = document.getElementById('breathingInstruction');
+            const btn = document.getElementById('breathingBtn');
+
+            if (!breathingActive) {
+                breathingActive = true;
+                btn.textContent = 'Stop';
+                startBreathing();
+            } else {
+                breathingActive = false;
+                btn.textContent = 'Start';
+                clearInterval(breathingInterval);
+                circle.classList.remove('inhale', 'exhale');
+                instruction.textContent = 'Click "Start" to begin';
+            }
+        }
+
+        function startBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const instruction = document.getElementById('breathingInstruction');
+            let phase = 0;
+
+            breathingInterval = setInterval(() => {
+                if (!breathingActive) return;
+
+                if (phase === 0) {
+                    circle.classList.remove('exhale');
+                    circle.classList.add('inhale');
+                    instruction.textContent = 'Breathe in... (4 seconds)';
+                    phase = 1;
+                } else if (phase === 1) {
+                    instruction.textContent = 'Hold... (4 seconds)';
+                    phase = 2;
+                } else if (phase === 2) {
+                    circle.classList.remove('inhale');
+                    circle.classList.add('exhale');
+                    instruction.textContent = 'Breathe out... (4 seconds)';
+                    phase = 3;
+                } else {
+                    instruction.textContent = 'Hold... (4 seconds)';
+                    phase = 0;
+                }
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
